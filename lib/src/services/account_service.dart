@@ -16,10 +16,10 @@ class AccountService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
-        throw Exception('Ocurrió un error al iniciar sesión');
+        return {'error': json.decode(response.body)['message']};
       }
     } catch (error) {
-      throw Exception('Ocurrió un error al iniciar sesión: $error');
+      return {'error': error.toString()};
     }
   }
 
@@ -34,14 +34,14 @@ class AccountService {
       if (response.statusCode == 201) {
         return json.decode(response.body);
       } else {
-        throw Exception('Ocurrió un error al registrar el usuario');
+        return {'error': json.decode(response.body)['message']};
       }
     } catch (error) {
-      throw Exception('Ocurrió un error al registrar el usuario: $error');
+      return {'error': error.toString()};
     }
   }
 
-  Future<void> resetPassword(String email) async {
+  Future<Map<String, dynamic>> resetPassword(String email) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/account/reset-password'),
@@ -49,11 +49,13 @@ class AccountService {
         body: json.encode({'email': email}),
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Ocurrió un error al restablecer la contraseña');
+      if (response.statusCode == 200) {
+        return {'message': 'Correo enviado para restablecer la contraseña'};
+      } else {
+        return {'error': json.decode(response.body)['message']};
       }
     } catch (error) {
-      throw Exception('Ocurrió un error al restablecer la contraseña: $error');
+      return {'error': error.toString()};
     }
   }
 }

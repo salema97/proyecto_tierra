@@ -18,6 +18,10 @@ class AuthProvider with ChangeNotifier {
     try {
       final response = await _accountService.login(email, password, device);
 
+      if (response.containsKey('error')) {
+        throw Exception(response['error']);
+      }
+
       _token = response['token'];
       Map<String, dynamic> decodedToken = JwtDecoder.decode(_token as String);
       _userInfo = UserInfo(
@@ -32,23 +36,31 @@ class AuthProvider with ChangeNotifier {
 
       notifyListeners();
     } catch (error) {
-      throw Exception('Ocurrió un error al iniciar sesión: $error');
+      rethrow;
     }
   }
 
   Future<void> register(String usarName, String email, String password) async {
     try {
-      await _accountService.register(usarName, email, password);
+      final response = await _accountService.register(usarName, email, password);
+
+      if (response.containsKey('error')) {
+        throw Exception(response['error']);
+      }
     } catch (error) {
-      throw Exception('Ocurrió un error al registrar el usuario: $error');
+      rethrow;
     }
   }
 
   Future<void> resetPassword(String email) async {
     try {
-      await _accountService.resetPassword(email);
+      final response = await _accountService.resetPassword(email);
+
+      if (response.containsKey('error')) {
+        throw Exception(response['error']);
+      }
     } catch (error) {
-      throw Exception('Ocurrió un error al restablecer la contraseña: $error');
+      rethrow;
     }
   }
 

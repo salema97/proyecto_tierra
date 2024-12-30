@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.pop(context);
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Ocurrió un error al registrar el usuario: $error'),
+          content: Text(error.toString()),
           backgroundColor: Colors.red,
         ));
       } finally {

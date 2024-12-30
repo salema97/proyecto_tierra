@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Ocurrió un error al iniciar sesión: $error'),
+          content: Text(error.toString()),
           backgroundColor: Colors.red,
         ));
       } finally {

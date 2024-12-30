@@ -31,7 +31,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ));
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Ocurrió un error al enviar el correo: $error'),
+          content: Text(error.toString()),
           backgroundColor: Colors.red,
         ));
       } finally {
