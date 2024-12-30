@@ -17,6 +17,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscureText = true;
+  bool _obscureConfirmText = true;
 
   Future<void> _handleRegister() async {
     if (_formKey.currentState!.validate()) {
@@ -52,6 +54,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context,
+        designSize: const Size(360, 690), minTextAdapt: true, splitScreenMode: true);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -59,93 +64,191 @@ class _RegisterPageState extends State<RegisterPage> {
           style: TextStyle(fontSize: 20.sp),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/images/image-default.webp',
-                  height: 150.h,
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(-0.5, -0.5),
+            radius: 1.5,
+            colors: [
+              Colors.blue[300]!,
+              Colors.blue[600]!,
+            ],
+          ),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Nombre de usuario",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(height: 16.h),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre de usuario',
-                    border: OutlineInputBorder(),
+              ),
+              SizedBox(height: 4.h),
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  hintText: 'Ingrese su nombre de usuario',
+                  hintStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide.none,
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Por favor ingrese su nombre de usuario';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 16.h),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Correo electrónico',
-                    border: OutlineInputBorder(),
+                style: const TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor ingrese su nombre de usuario';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Correo electrónico",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 4.h),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  hintText: 'Ingrese su correo electrónico',
+                  hintStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide.none,
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Por favor ingrese su correo electrónico';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 16.h),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Contraseña',
-                    border: OutlineInputBorder(),
+                style: const TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor ingrese su correo electrónico';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Contraseña",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 4.h),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: _obscureText,
+                decoration: InputDecoration(
+                  hintText: 'Ingrese una contraseña',
+                  hintStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide.none,
                   ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Por favor ingrese su contraseña';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.h),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirmar contraseña',
-                    border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.white70,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
                   ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Por favor confirme su contraseña';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Las contraseñas no coinciden';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 16.h),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _handleRegister,
-                  child: _isLoading
-                      ? SizedBox(
-                          width: 20.w,
-                          height: 20.h,
-                          child: const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text('Registrarse'),
+                style: const TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor ingrese su contraseña';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Confirmar contraseña",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 4.h),
+              TextFormField(
+                controller: _confirmPasswordController,
+                obscureText: _obscureConfirmText,
+                decoration: InputDecoration(
+                  hintText: 'Confirme su contraseña',
+                  hintStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmText ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.white70,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureConfirmText = !_obscureConfirmText;
+                      });
+                    },
+                  ),
+                ),
+                style: const TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor confirme su contraseña';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Las contraseñas no coinciden';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _handleRegister,
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  minimumSize: Size(double.infinity, 50.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                ),
+                child: _isLoading
+                    ? SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                      )
+                    : Text('Registrarse', style: TextStyle(fontSize: 18.sp)),
+              ),
+            ],
           ),
         ),
       ),

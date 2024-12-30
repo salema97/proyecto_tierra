@@ -21,6 +21,7 @@ dependencies:
   provider: ^6.1.2
   jwt_decoder: ^2.0.1
   onesignal_flutter: ^5.2.9
+  shared_preferences: ^2.3.4
 
 dev_dependencies:
   flutter_test:

@@ -20,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscureText = true;
 
   @override
   void initState() {
@@ -62,183 +63,223 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.green[100],
-        body: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 260.h,
-                      width: double.infinity,
-                      margin: EdgeInsets.all(14.w),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20.r),
-                          bottomRight: Radius.circular(190.r),
-                          topLeft: Radius.circular(20.r),
-                          topRight: Radius.circular(20.r),
-                        ),
-                        child: Image.asset(
-                          'assets/images/image-default.webp',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30.w),
-                      child: TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: const OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.black),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.black, width: 2),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.red, width: 2),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.red, width: 2),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
-                          label: Text("Correo electrónico", style: TextStyle(fontSize: 16.sp)),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, ingrese su correo electrónico';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 10.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30.w),
-                      child: TextFormField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: const OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.black),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.black, width: 2),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.red, width: 2),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(50.r)),
-                            borderSide: const BorderSide(color: Colors.red, width: 2),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
-                          label: Text("Contraseña", style: TextStyle(fontSize: 16.sp)),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, ingrese su contraseña';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => const ForgotPasswordPage()));
-                        },
-                        style: ButtonStyle(
-                          overlayColor: WidgetStateProperty.all(Colors.transparent),
-                        ),
-                        child: Text("Olvidé mi contraseña",
-                            style: TextStyle(fontSize: 14.sp), textAlign: TextAlign.center),
-                      ),
-                    ),
-                    SizedBox(height: 10.h),
-                    Text("Inicias sesión con",
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.sp)),
-                    SizedBox(height: 14.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 100.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesomeIcons.google,
-                              size: 40.sp,
-                              color: Colors.black,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.fingerprint,
-                              size: 40.sp,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    Center(
-                      child: FilledButton(
-                        onPressed: _isLoading ? null : _handleLogin,
-                        style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white, backgroundColor: Colors.green[500]),
-                        child: _isLoading
-                            ? const CircularProgressIndicator()
-                            : Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
-                                child: Text('Iniciar sesión', style: TextStyle(fontSize: 16.sp)),
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 10.h,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (_) => const RegisterPage()));
-                    },
-                    style: ButtonStyle(
-                      overlayColor: WidgetStateProperty.all(Colors.transparent),
-                    ),
-                    child: Text("Regístrate",
-                        style: TextStyle(fontSize: 16.sp), textAlign: TextAlign.center),
-                  ),
-                ),
-              ),
+    ScreenUtil.init(context,
+        designSize: const Size(360, 690), minTextAdapt: true, splitScreenMode: true);
+
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(-0.5, -0.5),
+            radius: 1.5,
+            colors: [
+              Colors.blue[300]!,
+              Colors.blue[600]!,
             ],
           ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // SizedBox(height: 10.h),
+            // Container(
+            //   height: 180.h,
+            //   width: double.infinity,
+            //   margin: EdgeInsets.symmetric(vertical: 20.h),
+            //   child: ClipRRect(
+            //     borderRadius: BorderRadius.only(
+            //       bottomLeft: Radius.circular(20.r),
+            //       bottomRight: Radius.circular(190.r),
+            //       topLeft: Radius.circular(20.r),
+            //       topRight: Radius.circular(20.r),
+            //     ),
+            //     child: Image.asset(
+            //       'assets/images/image-default.webp',
+            //       fit: BoxFit.cover,
+            //     ),
+            //   ),
+            // ),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Dirección de correo electrónico",
+                      style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      hintText: 'Ingrese un correo electrónico',
+                      hintStyle: const TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, ingrese su correo electrónico';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 8.h),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Contraseña",
+                      style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      hintText: 'Ingrese una contraseña',
+                      hintStyle: const TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.white70,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, ingrese su contraseña';
+                      }
+                      return null;
+                    },
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (_) => const ForgotPasswordPage()));
+                      },
+                      style: ButtonStyle(
+                        overlayColor: WidgetStateProperty.all(Colors.transparent),
+                        padding: WidgetStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Text("Olvidé mi contraseña",
+                          style: TextStyle(fontSize: 15.sp, color: Colors.white70),
+                          textAlign: TextAlign.center),
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _handleLogin,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      minimumSize: Size(double.infinity, 50.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Iniciar sesión', style: TextStyle(fontSize: 18.sp)),
+                              SizedBox(width: 8.w),
+                              Icon(Icons.arrow_forward, size: 20.sp, color: Colors.blue),
+                            ],
+                          ),
+                  ),
+                  SizedBox(height: 40.h),
+                  Text("Iniciar sesión con:",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, fontSize: 18.sp, color: Colors.white70)),
+                  SizedBox(height: 10.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: 60.w,
+                        height: 60.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.circular(12.w),
+                        ),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            FontAwesomeIcons.google,
+                            size: 40.sp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 60.w,
+                        height: 60.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.circular(12.w),
+                        ),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.fingerprint,
+                            size: 40.sp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("¿No tienes una cuenta? ",
+                            style: TextStyle(fontSize: 16.sp, color: Colors.white70)),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (_) => const RegisterPage()));
+                          },
+                          style: ButtonStyle(
+                            overlayColor: WidgetStateProperty.all(Colors.transparent),
+                            padding: WidgetStateProperty.all(EdgeInsets.zero),
+                          ),
+                          child: Text("Regístrate",
+                              style: TextStyle(fontSize: 16.sp, color: Colors.white70),
+                              textAlign: TextAlign.center),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

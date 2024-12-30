@@ -44,6 +44,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context,
+        designSize: const Size(360, 690), minTextAdapt: true, splitScreenMode: true);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -51,55 +54,88 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           style: TextStyle(fontSize: 20.sp),
         ),
       ),
-      body: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Text(
-                  "¿Olvidaste tu contraseña?",
-                  style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(-0.5, -0.5),
+            radius: 1.5,
+            colors: [
+              Colors.blue[300]!,
+              Colors.blue[600]!,
+            ],
+          ),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "¿Olvidaste tu contraseña?",
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña",
+                style: TextStyle(fontSize: 16.sp, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 32.h),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Correo electrónico",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(height: 16.h),
-                Text(
-                  "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña",
-                  style: TextStyle(fontSize: 16.sp, color: Colors.black54),
-                ),
-                SizedBox(height: 32.h),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Correo electrónico',
-                    border: OutlineInputBorder(),
+              ),
+              SizedBox(height: 4.h),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  hintText: 'Ingrese su correo electrónico',
+                  hintStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide.none,
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Por favor ingrese un correo electrónico';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Por favor ingrese un correo electrónico válido';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 16.h),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _handleResetPassword,
-                  child: _isLoading
-                      ? SizedBox(
-                          width: 24.w,
-                          height: 24.h,
-                          child: const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(Colors.white),
-                          ),
-                        )
-                      : const Text('Restablecer contraseña'),
+                style: const TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor ingrese su correo electrónico';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _handleResetPassword,
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  minimumSize: Size(double.infinity, 50.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
                 ),
-              ],
-            ),
-          )),
+                child: _isLoading
+                    ? SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                      )
+                    : Text('Restablecer contraseña', style: TextStyle(fontSize: 18.sp)),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

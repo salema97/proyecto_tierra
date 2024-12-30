@@ -5,6 +5,7 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_tierra/src/pages/login_page.dart';
 import 'package:proyecto_tierra/src/providers/auth_provider.dart';
+import 'package:proyecto_tierra/src/providers/notification_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,10 @@ void main() {
     }
   });
 
-  runApp(ChangeNotifierProvider(create: (_) => AuthProvider(), child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => AuthProvider()),
+    ChangeNotifierProvider(create: (_) => NotificationProvider())
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -44,10 +48,16 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Proyecto Tesis',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 83, 234, 196)),
+            primarySwatch: Colors.blue,
+            scaffoldBackgroundColor: Colors.white,
             useMaterial3: true,
           ),
-          home: const LoginPage(),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const LoginPage(),
+            '/admin': (context) => const LoginPage(),
+            '/user': (context) => const LoginPage(),
+          },
         );
       },
     );
