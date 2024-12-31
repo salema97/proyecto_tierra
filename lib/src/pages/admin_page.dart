@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 import 'package:proyecto_tierra/src/pages/login_page.dart';
 import 'package:proyecto_tierra/src/providers/auth_provider.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AdminPage extends StatefulWidget {
+  const AdminPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AdminPage> createState() => _AdminPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home", style: TextStyle(fontSize: 18.sp)),
+        title: Text("Admin", style: TextStyle(fontSize: 18.sp)),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

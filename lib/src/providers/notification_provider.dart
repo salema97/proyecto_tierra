@@ -9,6 +9,10 @@ class NotificationProvider with ChangeNotifier {
   List<Notification> get notifications => _notifications;
 
   Future<void> addNotification(Notification notification) async {
+    if (_notifications.any((existingNotification) => existingNotification.id == notification.id)) {
+      return;
+    }
+
     _notifications.insert(0, notification);
     await _saveNotifications();
     notifyListeners();
@@ -35,5 +39,14 @@ class NotificationProvider with ChangeNotifier {
     final String encodeList =
         json.encode(_notifications.map((notification) => notification.toJson()).toList());
     await prefs.setString('notifications', encodeList);
+  }
+
+  void clearNotifications() {
+    _notifications.clear();
+    notifyListeners();
+  }
+
+  int getNotificationCount() {
+    return _notifications.length;
   }
 }

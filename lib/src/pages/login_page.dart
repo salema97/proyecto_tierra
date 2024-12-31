@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import "package:provider/provider.dart";
 import 'package:proyecto_tierra/src/pages/forgot_password_page.dart';
-import 'package:proyecto_tierra/src/pages/home_page.dart';
 import 'package:proyecto_tierra/src/pages/register_page.dart';
 import 'package:proyecto_tierra/src/providers/auth_provider.dart';
 
@@ -29,8 +28,19 @@ class _LoginPageState extends State<LoginPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((success) {
         if (success) {
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
+          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+          final userInfo = authProvider.userInfo;
+          if (userInfo != null) {
+            if (userInfo.roles.length > 1) {
+              Navigator.of(context).pushReplacementNamed('/role-selection');
+            } else if (userInfo.roles.contains('admin')) {
+              authProvider.selectedRole = 'admin';
+              Navigator.of(context).pushReplacementNamed('/admin');
+            } else {
+              authProvider.selectedRole = userInfo.roles.first;
+              Navigator.of(context).pushReplacementNamed('/user');
+            }
+          }
         }
       });
     });
@@ -47,7 +57,18 @@ class _LoginPageState extends State<LoginPage> {
 
         if (!mounted) return;
 
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
+        final userInfo = authProvider.userInfo;
+        if (userInfo != null) {
+          if (userInfo.roles.length > 1) {
+            Navigator.of(context).pushReplacementNamed('/role-selection');
+          } else if (userInfo.roles.contains('admin')) {
+            authProvider.selectedRole = 'admin';
+            Navigator.of(context).pushReplacementNamed('/admin');
+          } else {
+            authProvider.selectedRole = userInfo.roles.first;
+            Navigator.of(context).pushReplacementNamed('/user');
+          }
+        }
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(error.toString()),

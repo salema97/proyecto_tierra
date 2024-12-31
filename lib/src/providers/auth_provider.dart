@@ -10,9 +10,16 @@ class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
   String? _token;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  String? _selectedRole;
 
   bool get isAuthenticated => _isAuthenticated;
   UserInfo? get userInfo => _userInfo;
+  String? get selectedRole => _selectedRole;
+
+  set selectedRole(String? role) {
+    _selectedRole = role;
+    notifyListeners();
+  }
 
   Future<void> login(String email, String password, String? device) async {
     try {
