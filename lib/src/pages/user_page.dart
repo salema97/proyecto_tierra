@@ -39,12 +39,12 @@ class _UserPageState extends State<UserPage> {
           onDestinationSelected: _onItemTapped,
           destinations: <Widget>[
             const NavigationDestination(
-              selectedIcon: Icon(Icons.home),
+              selectedIcon: Icon(Icons.home, color: Colors.blue),
               icon: Icon(Icons.home_outlined),
               label: 'Inicio',
             ),
             const NavigationDestination(
-              selectedIcon: Icon(Icons.view_list),
+              selectedIcon: Icon(Icons.view_list, color: Colors.blue),
               icon: Icon(
                 Icons.view_list_outlined,
               ),
@@ -54,12 +54,15 @@ class _UserPageState extends State<UserPage> {
               selectedIcon: Badge(
                 isLabelVisible: notificationCount > 0,
                 label: Text(notificationCount.toString()),
-                child: const Icon(Icons.notifications),
+                child: const Icon(Icons.notifications, color: Colors.blue),
               ),
               icon: Badge(
                 isLabelVisible: notificationCount > 0,
                 label: Text(notificationCount.toString()),
-                child: Icon(notificationCount > 0 ? Icons.notifications : Icons.notifications_none),
+                child: Icon(
+                  notificationCount > 0 ? Icons.notifications : Icons.notifications_none,
+                  color: notificationCount > 0 ? Colors.blue : null,
+                ),
               ),
               label: 'Notificaciones',
             ),

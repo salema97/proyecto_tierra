@@ -63,32 +63,46 @@ class _ExtensometroScreenState extends State<ExtensometroScreen> {
 
   Widget _buildCategoryTabs() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
         children: [
-          TextButton(
-            onPressed: _fetchExtensometros,
-            style: TextButton.styleFrom(
-              backgroundColor: _selectedZonaId == -1 ? Colors.blue : Colors.transparent,
+          Expanded(
+            child: TextButton(
+              onPressed: _fetchExtensometros,
+              style: TextButton.styleFrom(
+                backgroundColor: _selectedZonaId == -1 ? Colors.blue : Colors.white,
+                minimumSize: Size(double.infinity, 36.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              child: Text('Todos',
+                  style: TextStyle(
+                      fontSize: 14.sp,
+                      color: _selectedZonaId == -1 ? Colors.white : Colors.black54)),
             ),
-            child: Text('Todos',
-                style: TextStyle(
-                    fontSize: 14.sp, color: _selectedZonaId == -1 ? Colors.white : Colors.black)),
           ),
           ..._zonas.map((zona) {
             final isSelected = _selectedZonaId == zona.id;
-            return Padding(
-              padding: EdgeInsets.only(left: 14.w),
-              child: TextButton(
-                onPressed: () => _fetchExtensometrosPorZonaId(zona.id),
-                style: TextButton.styleFrom(
-                    backgroundColor: isSelected ? Colors.blue : Colors.transparent),
-                child: Text(zona.name,
-                    style: TextStyle(
-                        fontSize: 14.sp, color: isSelected ? Colors.white : Colors.black)),
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 14.w),
+                child: TextButton(
+                  onPressed: () => _fetchExtensometrosPorZonaId(zona.id),
+                  style: TextButton.styleFrom(
+                    backgroundColor: isSelected ? Colors.blue : Colors.white,
+                    minimumSize: Size(double.infinity, 36.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                  child: Text(zona.name,
+                      style: TextStyle(
+                          fontSize: 14.sp, color: isSelected ? Colors.white : Colors.black54)),
+                ),
               ),
             );
-          })
+          }),
         ],
       ),
     );
@@ -96,16 +110,22 @@ class _ExtensometroScreenState extends State<ExtensometroScreen> {
 
   Widget _buildExtensometrosList() {
     return ListView.builder(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       itemCount: _extensometros.length,
       itemBuilder: (context, index) {
         final extensometro = _extensometros[index];
         return Card(
-          margin: EdgeInsets.only(bottom: 8.h),
+          margin: EdgeInsets.only(bottom: 12.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
           child: ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
             leading: CircleAvatar(
-              backgroundColor: Colors.grey[200],
-              child: Icon(Icons.devices, color: Colors.grey, size: 24.sp),
+              backgroundColor: Colors.blue[100],
+              child: Icon(Icons.devices, color: Colors.blue, size: 24.sp),
             ),
             title: Text(
               extensometro.name,
@@ -115,7 +135,11 @@ class _ExtensometroScreenState extends State<ExtensometroScreen> {
               'Zona ID: ${extensometro.zonaId}',
               style: TextStyle(fontSize: 14.sp),
             ),
-            trailing: Icon(Icons.arrow_forward_outlined, size: 24.sp),
+            trailing: Icon(
+              Icons.arrow_forward_outlined,
+              size: 24.sp,
+              color: Colors.blue,
+            ),
             onTap: () async {
               final details = await InfoService.obtenerInfoPorExtensometroId(extensometro.id);
               Navigator.push(

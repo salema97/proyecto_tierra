@@ -46,7 +46,13 @@ class HeaderWidget extends StatelessWidget {
               return [
                 PopupMenuItem(
                   value: 'logout',
-                  child: Text('Cerrar sesión', style: TextStyle(fontSize: 14.sp)),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.exit_to_app),
+                      SizedBox(width: 8.w),
+                      Text('Cerrar sesión', style: TextStyle(fontSize: 14.sp)),
+                    ],
+                  ),
                 ),
               ];
             },

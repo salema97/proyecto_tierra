@@ -25,6 +25,8 @@ class ExtensometroInfoScreen extends StatelessWidget {
       initialOpenPanelValue: -1,
       children: sortedDetails.map<ExpansionPanelRadio>((info) {
         return ExpansionPanelRadio(
+            highlightColor: Colors.blue[100],
+            backgroundColor: Colors.white,
             value: info.id,
             headerBuilder: (context, isExpanded) {
               return ListTile(
@@ -66,6 +68,7 @@ class ExtensometroInfoScreen extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return '${twoDigits(date.day)}/${twoDigits(date.month)}/${date.year} ${twoDigits(date.hour)}:${twoDigits(date.minute)}:${twoDigits(date.second)}';
   }
 }

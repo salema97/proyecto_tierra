@@ -20,7 +20,9 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildReportsSection() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+      ),
       child: Column(
         children: [
           Row(
@@ -37,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   'Ver todo',
-                  style: TextStyle(fontSize: 16.sp),
+                  style: TextStyle(fontSize: 16.sp, color: Colors.blue),
                 ),
               ),
             ],
@@ -81,6 +83,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 16.h),
         ],
       ),
     );

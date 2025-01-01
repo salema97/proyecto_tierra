@@ -3,13 +3,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:proyecto_tierra/src/models/notification.dart' as CustomNotification;
 import 'package:proyecto_tierra/src/pages/admin_page.dart';
 import 'package:proyecto_tierra/src/pages/login_page.dart';
 import 'package:proyecto_tierra/src/pages/role_selection_page.dart';
 import 'package:proyecto_tierra/src/pages/user_page.dart';
 import 'package:proyecto_tierra/src/providers/auth_provider.dart';
 import 'package:proyecto_tierra/src/providers/notification_provider.dart';
-import 'package:proyecto_tierra/src/models/notification.dart' as CustomNotification;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,7 +71,23 @@ class MyApp extends StatelessWidget {
           title: 'Proyecto Tesis',
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            scaffoldBackgroundColor: Colors.white,
+            scaffoldBackgroundColor: Colors.grey[100],
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.blue[300],
+              elevation: 0,
+              iconTheme: const IconThemeData(color: Colors.black),
+            ),
+            navigationBarTheme: NavigationBarThemeData(
+              backgroundColor: Colors.white,
+              indicatorColor: Colors.blue[100],
+            ),
+            listTileTheme: const ListTileThemeData(
+              tileColor: Colors.white,
+            ),
+            cardTheme: const CardTheme(
+              color: Colors.white,
+            ),
+            popupMenuTheme: const PopupMenuThemeData(color: Colors.white),
             useMaterial3: true,
           ),
           initialRoute: '/',
