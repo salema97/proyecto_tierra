@@ -10,7 +10,7 @@ class ExtensometroInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<InfoDetail> sortedDetails = List.from(infoDetails)
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      ..sort((a, b) => b.id.compareTo(a.id));
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalles del extensometro', style: TextStyle(fontSize: 20.sp)),

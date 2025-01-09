@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:proyecto_tierra/src/models/extensometro.dart';
 import 'package:proyecto_tierra/src/models/zona.dart';
-import 'package:proyecto_tierra/src/screens/user/extensometro_info_screen.dart';
+import 'package:proyecto_tierra/src/screens/user/extensometro_chart.dart';
 import 'package:proyecto_tierra/src/services/extensometro_service.dart';
 import 'package:proyecto_tierra/src/services/info_service.dart';
 import 'package:proyecto_tierra/src/services/zona_service.dart';
@@ -142,10 +142,8 @@ class _ExtensometroScreenState extends State<ExtensometroScreen> {
             ),
             onTap: () async {
               final details = await InfoService.obtenerInfoPorExtensometroId(extensometro.id);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ExtensometroInfoScreen(infoDetails: details)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ExtensometroChart(infoDetails: details)));
             },
           ),
         );
