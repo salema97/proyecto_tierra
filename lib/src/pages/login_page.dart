@@ -20,10 +20,14 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscureText = true;
+  bool _isBiometricAvailable = false;
+  bool _isAuthenticated = false;
 
   @override
   void initState() {
     super.initState();
+    _checkBiometricAvailable();
+    _checkAuthentication();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((success) {
@@ -43,6 +47,23 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       });
+    });
+  }
+
+  Future<void> _checkBiometricAvailable() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isAvailable = await authProvider.isBiometricAvailable();
+
+    setState(() {
+      _isBiometricAvailable = isAvailable;
+    });
+  }
+
+  Future<void> _checkAuthentication() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isAuthenticated = await authProvider.getAuthToken();
+    setState(() {
+      _isAuthenticated = isAuthenticated;
     });
   }
 
@@ -82,6 +103,73 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _handleGoogleSingIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final device = OneSignal.User.pushSubscription.id;
+
+      await authProvider.signInWithGoogle(device!);
+
+      if (!mounted) return;
+
+      final userInfo = authProvider.userInfo;
+      if (userInfo != null) {
+        if (userInfo.roles.length > 1) {
+          Navigator.of(context).pushReplacementNamed('/role-selection');
+        } else if (userInfo.roles.contains('admin')) {
+          authProvider.selectedRole = 'admin';
+          Navigator.of(context).pushReplacementNamed('/admin');
+        } else {
+          authProvider.selectedRole = userInfo.roles.first;
+          Navigator.of(context).pushReplacementNamed('/user');
+        }
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(error.toString()),
+        backgroundColor: Colors.red,
+      ));
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _handleBiometricLogin() async {
+    setState(() => _isLoading = true);
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      await authProvider.loginWithBiometric();
+
+      if (!mounted) return;
+
+      final userInfo = authProvider.userInfo;
+      if (userInfo != null) {
+        if (userInfo.roles.length > 1) {
+          Navigator.of(context).pushReplacementNamed('/role-selection');
+        } else if (userInfo.roles.contains('admin')) {
+          authProvider.selectedRole = 'admin';
+          Navigator.of(context).pushReplacementNamed('/admin');
+        } else {
+          authProvider.selectedRole = userInfo.roles.first;
+          Navigator.of(context).pushReplacementNamed('/user');
+        }
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(error.toString()),
+        backgroundColor: Colors.red,
+      ));
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context,
@@ -103,24 +191,6 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // SizedBox(height: 10.h),
-            // Container(
-            //   height: 180.h,
-            //   width: double.infinity,
-            //   margin: EdgeInsets.symmetric(vertical: 20.h),
-            //   child: ClipRRect(
-            //     borderRadius: BorderRadius.only(
-            //       bottomLeft: Radius.circular(20.r),
-            //       bottomRight: Radius.circular(190.r),
-            //       topLeft: Radius.circular(20.r),
-            //       topRight: Radius.circular(20.r),
-            //     ),
-            //     child: Image.asset(
-            //       'assets/images/image-default.webp',
-            //       fit: BoxFit.cover,
-            //     ),
-            //   ),
-            // ),
             Form(
               key: _formKey,
               child: Column(
@@ -233,7 +303,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                   ),
                   SizedBox(height: 40.h),
-                  Text("Iniciar sesión con:",
+                  Text("O continuar con:",
                       style: TextStyle(
                           fontWeight: FontWeight.w500, fontSize: 18.sp, color: Colors.white70)),
                   SizedBox(height: 10.h),
@@ -248,7 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(12.w),
                         ),
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: _isLoading ? null : _handleGoogleSingIn,
                           icon: Icon(
                             FontAwesomeIcons.google,
                             size: 40.sp,
@@ -256,22 +326,23 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                      Container(
-                        width: 60.w,
-                        height: 60.w,
-                        decoration: BoxDecoration(
-                          color: Colors.white70,
-                          borderRadius: BorderRadius.circular(12.w),
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.fingerprint,
-                            size: 40.sp,
-                            color: Colors.black,
+                      if (_isBiometricAvailable && _isAuthenticated)
+                        Container(
+                          width: 60.w,
+                          height: 60.w,
+                          decoration: BoxDecoration(
+                            color: Colors.white70,
+                            borderRadius: BorderRadius.circular(12.w),
+                          ),
+                          child: IconButton(
+                            onPressed: _isLoading ? null : _handleBiometricLogin,
+                            icon: Icon(
+                              Icons.fingerprint,
+                              size: 40.sp,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                   Align(

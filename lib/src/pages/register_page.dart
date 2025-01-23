@@ -228,29 +228,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               SizedBox(height: 16.h),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Registrar huella dactilar (opcional)",
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
-              SizedBox(height: 4.h),
-              CheckboxListTile(
-                value: false,
-                onChanged: (value) {},
-                title: Text(
-                  "Registrar huella dactilar",
-                  style: TextStyle(fontSize: 16.sp, color: Colors.white),
-                ),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                tileColor: Colors.white.withOpacity(0.2),
-                checkColor: Colors.blue,
-                activeColor: Colors.white,
-              ),
-              SizedBox(height: 16.h),
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleRegister,
                 style: ElevatedButton.styleFrom(

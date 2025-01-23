@@ -1,5 +1,5 @@
-package com.example.proyecto_tierra
+package com.espe.proyecto_tierra
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity: FlutterActivity()
+class MainActivity: FlutterFragmentActivity()
