@@ -2,7 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:proyecto_tierra/src/models/info.dart';
+import 'package:proyecto_tierra/src/providers/auth_provider.dart';
 import 'package:proyecto_tierra/src/screens/extensometro_report.dart';
 import 'package:proyecto_tierra/src/widgets/battery_level_indicator.dart';
 
@@ -21,11 +23,12 @@ class _ExtensometroChartState extends State<ExtensometroChart> with SingleTicker
   DateTime? endDate;
   late DateTime firstDate;
   late DateTime lastDate;
+  late String role;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 7, vsync: this);
 
     if (widget.infoDetails.isNotEmpty) {
       firstDate = widget.infoDetails.first.createdAt;
@@ -37,9 +40,13 @@ class _ExtensometroChartState extends State<ExtensometroChart> with SingleTicker
   }
 
   @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      role = Provider.of<AuthProvider>(context).selectRole;
+      _tabController = TabController(length: role == 'admin' ? 7 : 1, vsync: this);
+      _initialized = true;
+    }
   }
 
   @override
@@ -48,22 +55,23 @@ class _ExtensometroChartState extends State<ExtensometroChart> with SingleTicker
       appBar: AppBar(
         title: Text('Detalles del extensometro', style: TextStyle(fontSize: 20.sp)),
         bottom: TabBar(
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.black54,
-          overlayColor: MaterialStateProperty.all(Colors.blue),
-          indicatorColor: Colors.blue,
-          dividerColor: Colors.blue,
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'MAX6675'),
-            Tab(text: 'LM35'),
-            Tab(text: 'Humedad'),
-            Tab(text: 'Dia'),
-            Tab(text: 'Corriente'),
-            Tab(text: 'Batería'),
-            Tab(text: 'Desplazamiento')
-          ].toList(),
-        ),
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.black54,
+            overlayColor: MaterialStateProperty.all(Colors.blue),
+            indicatorColor: Colors.blue,
+            dividerColor: Colors.blue,
+            controller: _tabController,
+            tabs: role == 'admin'
+                ? [
+                    const Tab(text: 'MAX6675'),
+                    const Tab(text: 'LM35'),
+                    const Tab(text: 'Humedad'),
+                    const Tab(text: 'Dia'),
+                    const Tab(text: 'Corriente'),
+                    const Tab(text: 'Batería'),
+                    const Tab(text: 'Desplazamiento')
+                  ]
+                : [const Tab(text: 'Desplazamiento')]),
       ),
       body: Column(
         children: [
@@ -106,75 +114,82 @@ class _ExtensometroChartState extends State<ExtensometroChart> with SingleTicker
               padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 8.w),
               child: TabBarView(
                 controller: _tabController,
-                children: [
-                  _buildChart('Temperatura MAX6675 (°C)', Colors.red,
-                      (info) => _parseDouble(info.temperaturaMAX6675)),
-                  _buildChart('Temperatura LM35 (°C)', Colors.blue,
-                      (info) => _parseDouble(info.temperaturaLM35)),
-                  _buildChart('Humedad Relativa (%)', Colors.green,
-                      (info) => _parseDouble(info.humedadRelativa)),
-                  _buildChart('Es de día', Colors.purple, (info) => info.esDia ? 1 : 0),
-                  _buildChart('Corriente CS712 (mp)', Colors.orange,
-                      (info) => _parseDouble(info.corrienteCS712)),
-                  _buildLevelIndicator('Nivel de Batería (%)', Colors.pink,
-                      (info) => _parseDouble(info.nivelBateria)),
-                  _buildChart('Desplazamiento Lineal (mm)', Colors.teal,
-                      (info) => _parseDouble(info.desplazamientoLineal)),
-                ],
+                children: role == 'admin'
+                    ? [
+                        _buildChart('Temperatura MAX6675 (°C)', Colors.red,
+                            (info) => _parseDouble(info.temperaturaMAX6675)),
+                        _buildChart('Temperatura LM35 (°C)', Colors.blue,
+                            (info) => _parseDouble(info.temperaturaLM35)),
+                        _buildChart('Humedad Relativa (%)', Colors.green,
+                            (info) => _parseDouble(info.humedadRelativa)),
+                        _buildChart('Es de día', Colors.purple, (info) => info.esDia ? 1 : 0),
+                        _buildChart('Corriente CS712 (mp)', Colors.orange,
+                            (info) => _parseDouble(info.corrienteCS712)),
+                        _buildLevelIndicator('Nivel de Batería (%)', Colors.pink,
+                            (info) => _parseDouble(info.nivelBateria)),
+                        _buildChart('Desplazamiento Lineal (mm)', Colors.teal,
+                            (info) => _parseDouble(info.desplazamientoLineal)),
+                      ]
+                    : [
+                        _buildChart('Desplazamiento Lineal (mm)', Colors.teal,
+                            (info) => _parseDouble(info.desplazamientoLineal)),
+                      ],
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 40.h),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
+          if (role == 'admin') ...{
+            Padding(
+              padding: EdgeInsets.only(bottom: 40.h),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  foregroundColor: Colors.white,
+                  overlayColor: Colors.grey,
                 ),
-                foregroundColor: Colors.white,
-                overlayColor: Colors.grey,
-              ),
-              onPressed: () {
-                if (startDate != null && endDate != null) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ExtensometroReport(
-                      infoDetails: widget.infoDetails,
-                      startDate: startDate!,
-                      endDate: endDate!,
-                    );
-                  }));
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: ColorScheme.fromSwatch().copyWith(
-                            primary: Colors.blue,
-                          ),
-                        ),
-                        child: AlertDialog(
-                          title: const Text('Error'),
-                          content: const Text(
-                              'Por favor seleccione una fecha de inicio y fin, para generar un reporte.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Aceptar'),
-                            ),
-                          ],
-                        ),
+                onPressed: () {
+                  if (startDate != null && endDate != null) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return ExtensometroReport(
+                        infoDetails: widget.infoDetails,
+                        startDate: startDate!,
+                        endDate: endDate!,
                       );
-                    },
-                  );
-                }
-              },
-              child: Text('Generar reporte', style: TextStyle(fontSize: 16.sp)),
+                    }));
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.fromSwatch().copyWith(
+                              primary: Colors.blue,
+                            ),
+                          ),
+                          child: AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text(
+                                'Por favor seleccione una fecha de inicio y fin, para generar un reporte.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+                child: Text('Generar reporte', style: TextStyle(fontSize: 16.sp)),
+              ),
             ),
-          ),
+          },
         ],
       ),
     );

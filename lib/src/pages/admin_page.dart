@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:proyecto_tierra/src/pages/login_page.dart';
-import 'package:proyecto_tierra/src/providers/auth_provider.dart';
+import 'package:proyecto_tierra/src/providers/notification_provider.dart';
+import 'package:proyecto_tierra/src/screens/notifications_screen.dart';
+import 'package:proyecto_tierra/src/screens/user/extensometro_screen.dart';
+import 'package:proyecto_tierra/src/screens/user/home_screen.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -12,68 +13,62 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _screens = <Widget>[
+    const HomeScreen(),
+    const ExtensometroScreen(),
+    const NotificationsScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final userInfo = authProvider.userInfo;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Admin", style: TextStyle(fontSize: 18.sp)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await authProvider.logout();
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (_) => const LoginPage()));
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Text(
-              "Bienvenido ${userInfo?.userName ?? 'User'}!",
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
+      body: _screens[_selectedIndex],
+      bottomNavigationBar:
+          Consumer<NotificationProvider>(builder: (context, notificationProvider, child) {
+        int notificationCount = notificationProvider.getNotificationCount();
+        return NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _onItemTapped,
+          destinations: <Widget>[
+            const NavigationDestination(
+              selectedIcon: Icon(Icons.home, color: Colors.blue),
+              icon: Icon(Icons.home_outlined),
+              label: 'Inicio',
+            ),
+            const NavigationDestination(
+              selectedIcon: Icon(Icons.view_list, color: Colors.blue),
+              icon: Icon(
+                Icons.view_list_outlined,
               ),
+              label: 'Extensómetros',
             ),
-            SizedBox(height: 16.h),
-            Text(
-              "Email: ${userInfo?.email ?? 'Email'}",
-              style: TextStyle(fontSize: 16.sp),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              "Roles: ${userInfo?.roles.join(', ') ?? 'Roles'}",
-              style: TextStyle(fontSize: 16.sp),
+            NavigationDestination(
+              selectedIcon: Badge(
+                isLabelVisible: notificationCount > 0,
+                label: Text(notificationCount.toString()),
+                child: const Icon(Icons.notifications, color: Colors.blue),
+              ),
+              icon: Badge(
+                isLabelVisible: notificationCount > 0,
+                label: Text(notificationCount.toString()),
+                child: Icon(
+                  notificationCount > 0 ? Icons.notifications : Icons.notifications_none,
+                  color: notificationCount > 0 ? Colors.blue : null,
+                ),
+              ),
+              label: 'Notificaciones',
             ),
           ],
-        ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Inicio',
-          ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.notifications_sharp)),
-            label: 'Notificaciones',
-          ),
-          NavigationDestination(
-            icon: Badge(
-              label: Text('5'),
-              child: Icon(Icons.messenger_sharp),
-            ),
-            label: 'Mensajes',
-          ),
-        ],
-      ),
+        );
+      }),
     );
   }
 }

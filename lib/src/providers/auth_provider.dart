@@ -26,6 +26,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  get selectRole => _selectedRole;
+
   Future<void> login(String email, String password, String? device) async {
     try {
       final response = await _accountService.login(email, password, device);
